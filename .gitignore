@@ -1,4 +1,14 @@
+# Ignore virtual environment directory
 venv/
+
+# Ignore Node.js modules directory (installed by npm)
 node_modules/
+
+# Ignore compiled Python files
 *.pyc
-project_strucuture.txt
+
+# Ignore project structure documentation file
+project_structure.txt
+
+# Ignore environment variables file (contains sensitive information)
+.env
