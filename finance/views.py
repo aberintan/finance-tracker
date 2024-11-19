@@ -1,8 +1,15 @@
+# Imports for views to render HTML templates (Django)
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Transaction, RecurringInvoice, Budget
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
+# Imports for API endpoints (React)
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from .serializers import TransactionSerializer, RecurringInvoiceSerializer, BudgetSerializer
+
+# Views to render HTML templates (Django)
 @login_required  # Ensure the user is logged in
 def transaction_list(request):
     transactions = Transaction.objects.filter(user=request.user)  # Filter transactions for the logged-in user
@@ -80,3 +87,34 @@ def budget_add(request):
         return redirect('budget_list')
 
     return render(request, 'budget_add.html')
+
+# API endpoints using DRF viewsets (React)
+class TransactionViewSet(viewsets.ModelViewSet):
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Transaction.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class RecurringInvoiceViewSet(viewsets.ModelViewSet):
+    serializer_class = RecurringInvoiceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return RecurringInvoice.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class BudgetViewSet(viewsets.ModelViewSet):
+    serializer_class = BudgetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Budget.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
