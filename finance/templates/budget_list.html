@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Budgets</title>
+</head>
+<body>
+    <h1>Budgets</h1>
+    <a href="{% url 'budget_add' %}">Add New Budget</a>
+    <ul>
+    {% for budget in budgets %}
+        <li>
+            {{ budget.category }}: ${{ budget.limit }}
+        </li>
+    {% empty %}
+        <li>No budgets found.</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
