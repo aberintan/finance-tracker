@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Budget</title>
+</head>
+<body>
+    <h1>Add New Budget</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="category">Category:</label>
+        <input type="text" name="category" required><br>
+
+        <label for="limit">Limit:</label>
+        <input type="number" step="0.01" name="limit" required><br>
+
+        <input type="submit" value="Add Budget">
+    </form>
+    <a href="{% url 'budget_list' %}">Back to Budgets</a>
+</body>
+</html>
