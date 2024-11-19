@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transaction Detail</title>
+</head>
+<body>
+    <h1>Transaction Detail</h1>
+    <p>Amount: ${{ transaction.amount }}</p>
+    <p>Date: {{ transaction.date }}</p>
+    <p>Category: {{ transaction.category }}</p>
+    <p>Payment Method: {{ transaction.payment_method }}</p>
+    <p>Notes: {{ transaction.notes }}</p>
+    <a href="{% url 'transaction_list' %}">Back to Transaction List</a>
+</body>
+</html>
