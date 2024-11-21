@@ -8,6 +8,11 @@ from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .serializers import TransactionSerializer, RecurringInvoiceSerializer, BudgetSerializer
+from rest_framework.authentication import TokenAuthentication
+
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
 # Views to render HTML templates (Django)
 @login_required  # Ensure the user is logged in
@@ -90,8 +95,9 @@ def budget_add(request):
 
 # API endpoints using DRF viewsets (React)
 class TransactionViewSet(viewsets.ModelViewSet):
-    serializer_class = TransactionSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = TransactionSerializer
 
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)
@@ -100,8 +106,9 @@ class TransactionViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 class RecurringInvoiceViewSet(viewsets.ModelViewSet):
-    serializer_class = RecurringInvoiceSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = RecurringInvoiceSerializer
 
     def get_queryset(self):
         return RecurringInvoice.objects.filter(user=self.request.user)
@@ -110,11 +117,25 @@ class RecurringInvoiceViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 class BudgetViewSet(viewsets.ModelViewSet):
-    serializer_class = BudgetSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = BudgetSerializer
 
     def get_queryset(self):
         return Budget.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
